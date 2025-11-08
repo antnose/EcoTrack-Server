@@ -1,4 +1,4 @@
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const express = require("express");
 const app = express();
 const cors = require("cors");
@@ -20,22 +20,33 @@ const client = new MongoClient(uri, {
 });
 
 const db = client.db("EcoTrack");
-const challenges = db.collection("challenges");
-const activateChallengesCollection = db.collection("activateChallenges");
+const challengesCollection = db.collection("challenges");
 const recentTipsCollection = db.collection("recentTips");
 
 async function run() {
   try {
+    // Get All Challenges
+    app.get("/all_challenges", async (req, res) => {
+      const result = await challengesCollection.find().toArray();
+      res.send(result);
+    });
+
+    // Get three Challenges
+    app.get("/challenges", async (req, res) => {
+      const result = await challengesCollection.find().limit(3).toArray();
+      res.send(result);
+    });
+
     // Get Carousel Data
     app.get("/carousel_data", async (req, res) => {
-      const result = await challenges.find().limit(6).toArray();
+      const result = await challengesCollection.find().limit(4).toArray();
       res.send(result);
     });
 
     // Get Active Challenges Data
     // ---------> Here featured need to change for show latest challenges
     app.get("/activate_challenges", async (req, res) => {
-      const result = await activateChallengesCollection.find().toArray();
+      const result = await challengesCollection.find().limit(4).toArray();
       res.send(result);
     });
 
@@ -45,10 +56,19 @@ async function run() {
       res.send(result);
     });
 
+    // Get Specific data using id
+    app.get("/challenge/:id", async (req, res) => {
+      // console.log(req.params.id);
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await challengesCollection.findOne(query);
+      res.send(result);
+    });
+
     // Create challenge
     app.post("/challenge", async (req, res) => {
       const data = req.body;
-      const result = await challenges.insertOne(data);
+      const result = await challengesCollection.insertOne(data);
       res.send(result);
     });
 

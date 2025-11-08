@@ -21,11 +21,27 @@ const client = new MongoClient(uri, {
 
 const db = client.db("EcoTrack");
 const challenges = db.collection("challenges");
+const activateChallengesCollection = db.collection("activateChallenges");
+const recentTipsCollection = db.collection("recentTips");
+
 async function run() {
   try {
     // Get Carousel Data
     app.get("/carousel_data", async (req, res) => {
       const result = await challenges.find().limit(6).toArray();
+      res.send(result);
+    });
+
+    // Get Active Challenges Data
+    // ---------> Here featured need to change for show latest challenges
+    app.get("/activate_challenges", async (req, res) => {
+      const result = await activateChallengesCollection.find().toArray();
+      res.send(result);
+    });
+
+    // Get Recent Tips
+    app.get("/recent_tips", async (req, res) => {
+      const result = await recentTipsCollection.find().toArray();
       res.send(result);
     });
 

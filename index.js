@@ -29,8 +29,9 @@ async function run() {
   try {
     //  Get All Challenges
     app.get("/all_challenges", async (req, res) => {
-      const { category } = req.query;
-      console.log(category);
+      const { category, sort } = req.query;
+      // console.log(category);
+      console.log(sort);
 
       let query = {};
       if (category && category !== "All") {

@@ -215,14 +215,14 @@ async function run() {
     // ------------->  Delete challenge <-------------
     app.delete("/challenge/:id", async (req, res) => {
       const id = req.params.id;
-      console.log(id);
+      // console.log(id);
       const result = challengesCollection.deleteOne({ _id: new ObjectId(id) });
       res.send(result);
     });
 
     await client.connect();
     // await client.db("admin").command({ ping: 1 });
-    console.log(" Connected to MongoDB successfully!");
+    // console.log(" Connected to MongoDB successfully!");
   } finally {
   }
 }

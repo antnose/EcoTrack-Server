@@ -23,12 +23,21 @@ const challengesCollection = db.collection("challenges");
 const recentTipsCollection = db.collection("recentTips");
 const usersCollection = db.collection("users");
 const upcomingEventsLeft = db.collection("upcomingLeft");
+const statsCollection = db.collection("stats");
 
 async function run() {
   try {
     //  Get All Challenges
     app.get("/all_challenges", async (req, res) => {
-      const result = await challengesCollection.find().toArray();
+      const { category } = req.query;
+      console.log(category);
+
+      let query = {};
+      if (category && category !== "All") {
+        query = { category: category.trim() };
+      }
+
+      const result = await challengesCollection.find(query).toArray();
       res.send(result);
     });
 
@@ -186,6 +195,12 @@ async function run() {
     // ---------> Upcoming events section --------->
     app.get("/upcomingLeft", async (req, res) => {
       const result = await upcomingEventsLeft.find().toArray();
+      res.send(result);
+    });
+
+    // ---------> Stats collection <---------------
+    app.get("/stats", async (req, res) => {
+      const result = await statsCollection.find().toArray();
       res.send(result);
     });
 

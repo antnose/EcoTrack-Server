@@ -31,14 +31,21 @@ async function run() {
     app.get("/all_challenges", async (req, res) => {
       const { category, sort } = req.query;
       // console.log(category);
-      console.log(sort);
+      // console.log(sort);
 
       let query = {};
       if (category && category !== "All") {
         query = { category: category.trim() };
       }
 
-      const result = await challengesCollection.find(query).toArray();
+      let cursor = challengesCollection.find(query);
+
+      if (sort) {
+        const sortOpt = sort === "asc" ? 1 : -1;
+        cursor = cursor.sort({ participants: sortOpt });
+      }
+
+      const result = await cursor.toArray();
       res.send(result);
     });
 

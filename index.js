@@ -95,6 +95,15 @@ async function run() {
         const challengeId = req.params.id;
         const { email } = req.body;
 
+        const user = await usersCollection.findOne({ email });
+        const isJoinedUser = user?.joinedChallenges?.find(
+          (joi) => joi.challengeId === challengeId
+        );
+
+        if (isJoinedUser) {
+          return res.send({ message: "You already joined this challenge" });
+        }
+
         // ncrement logic
         const result = await challengesCollection.updateOne(
           { _id: new ObjectId(challengeId) },
@@ -216,7 +225,9 @@ async function run() {
     app.delete("/challenge/:id", async (req, res) => {
       const id = req.params.id;
       // console.log(id);
-      const result = challengesCollection.deleteOne({ _id: new ObjectId(id) });
+      const result = await challengesCollection.deleteOne({
+        _id: new ObjectId(id),
+      });
       res.send(result);
     });
 
